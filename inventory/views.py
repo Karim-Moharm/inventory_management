@@ -12,7 +12,7 @@ class TemplateView(TemplateView):
 class SignUpView(View):
     def get(self, request):
         form = UserRegistrationForm()
-        return render(request, "inventory/signup.html", {"form", form})
+        return render(request, "inventory/signup.html", {"form": form})
 
     def post(self, request):
         form = UserRegistrationForm(request.POST)
@@ -25,4 +25,4 @@ class SignUpView(View):
             login(request, user)
             if login:
                 return redirect("dashboard")
-        return render(request, "inventory/signup.html", {"form", form})
+        return render(request, "inventory/signup.html", {"form": form})
