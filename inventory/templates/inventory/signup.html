@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 <div class="row">
   <div class="col-11 col-md-4 mx-auto mt-5">
@@ -11,16 +13,18 @@
     </div>
     {% endfor %}
     {% endfor %}
+
     {% for error in form.non_field_error %}
     <div class="alert alert-danger">
       <strong>{{ error|escape }}</strong>
     </div>
     {% endfor %}
+
     {% endif %}
 
     <form method="post">
       {% csrf_token %}
-      {{ form }}
+      {{ form|crispy }}
       <button type="submit" class="btn btn-primary">
         Sign UP
       </button>
