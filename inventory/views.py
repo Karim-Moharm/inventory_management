@@ -5,6 +5,8 @@ from .forms import UserRegistrationForm, ItemForm
 from django.contrib.auth import authenticate, login
 from .models import InventoryItem, Category
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
+from django.db.models import F, Q
 
 
 class Index(TemplateView):
@@ -14,7 +16,41 @@ class Index(TemplateView):
 class Dashboard(LoginRequiredMixin, View):
     def get(self, request):
         items = InventoryItem.objects.filter(created_by=request.user.id).order_by("pk")
-        return render(request, "inventory/dashboard.html", {"items": items})
+        low_stock_items = items.filter(
+            Q(quantity__lte=F("reorder_level")) & ~Q(quantity=0)
+        ).count()
+        empty_stock_items = items.filter(quantity=0).count()
+        low_inventory_ids = items.filter(
+            Q(quantity__lte=F("reorder_level")) & ~Q(quantity=0)
+        ).values_list("id", flat=True)
+        empty_inventory_ids = items.filter(quantity=0).values_list("id", flat=True)
+
+        if low_stock_items > 0:
+            messages.error(
+                request,
+                f"there are {low_stock_items} items has low stock",
+            )
+        if empty_stock_items > 0:
+            if empty_stock_items > 1:
+                messages.error(
+                    request,
+                    f"there are {empty_stock_items} empty items in the stock",
+                )
+            else:
+                messages.error(
+                    request,
+                    f"there is {empty_stock_items} empty item in the stock",
+                )
+
+        return render(
+            request,
+            "inventory/dashboard.html",
+            {
+                "items": items,
+                "low_inventory_ids": low_inventory_ids,
+                "empty_inventory_ids": empty_inventory_ids,
+            },
+        )
 
 
 class SignUpView(View):

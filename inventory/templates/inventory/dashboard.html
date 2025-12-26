@@ -1,7 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
+
+{% if messages %}
+<div class="row mt-2">
+  {% for message in messages %}
+  {% if message.tags == 'error' %}
+  <div class="col-md-10 col-12 mx-auto alert alert-dismissible alert-danger mb-2">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {{ message }}
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
 <div class="row">
-  <div class="col-mid-10 col-11 mx-auto mt-5">
+  <div class="col-mid-10 col-11 mx-auto mt-4">
     <div class="d-flex justify-content-end">
       <a href="{% url 'item_create' %}" class="btn btn-primary">+</a>
     </div>
@@ -39,7 +53,13 @@
           <th scope="col">{{ item.id }}</th>
           <td>{{ item.name }}</td>
           <td>{{ item.slug }}</td>
-          <td>{{ item.quantity }}</td>
+          {% if item.id in low_inventory_ids %}
+          <td class="text-warning">{{ item.quantity }}</td>
+          {% elif item.id in empty_inventory_ids %}
+          <td class="text-danger">{{ item.quantity }}</td>
+          {% else %}
+          <td class="text-success">{{ item.quantity }}</td>
+          {% endif %}
           <td>{{ item.category }}</td>
           <td>{{ item.unit_price }}</td>
           <td>{{ item.created_by.username }}</td>
