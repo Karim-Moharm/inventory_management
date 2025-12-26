@@ -6,11 +6,20 @@
     <div class="col-sm-11 col-md-4 mx-auto mt-5">
       <h1 class="fw-light"> Track and manage your inventory </h1>
       <p class="fw-light">keep track of your enventory</p>
-      <a href="#">
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}">
         <button class="btn btn-primary">
           Cilck here to start
         </button>
       </a>
+      {% else %}
+      <a href="{% url 'login' %}">
+        <button class="btn btn-info">
+          Login
+        </button>
+      </a>
+      {% endif %}
+
     </div>
   </div>
 </div>

@@ -3,20 +3,24 @@
 <div class="row">
   <div class="col-mid-10 col-11 mx-auto mt-5">
     <div class="d-flex justify-content-end">
-      <a href="#" class="btn btn-primary">+</a>
+      <a href="{% url 'item_create' %}" class="btn btn-primary">+</a>
     </div>
     <table class="table tabke-hover table-striped">
       <thead>
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Name</th>
-          <th scope="col">QTY</th>
+          <th scope="col">Slug</th>
+          <th scope="col">Quantity</th>
           <th scope="col">Category</th>
-          <th scope="col">T</th>
-          <th scope="col">T</th>
+          <th scope="col">Unit Price</th>
+          <th scope="col">Created By</th>
+          <th scope="col">Update</th>
+          <th scope="col">Delete</th>
         </tr>
       </thead>
       <tbody>
+        {% if items|length == 0 %}
         <tr>
           <th scope="col">-</th>
           <td>-</td>
@@ -24,9 +28,93 @@
           <td>-</td>
           <td>-</td>
           <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+
         </tr>
+        {% else %}
+        {% for item in items %}
+        <tr>
+          <th scope="col">{{ item.id }}</th>
+          <td>{{ item.name }}</td>
+          <td>{{ item.slug }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.unit_price }}</td>
+          <td>{{ item.created_by.username }}</td>
+          <td>
+            <a href="{% url 'update_item' item.sku %}" class="btn btn-primary">Update</a>
+          </td>
+
+          <!-- DELETE -->
+
+          <td>
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"
+              data-delete-url="{% url 'delete_item' item.sku %}" data-item-name="{{ item.name }}">
+              Delete
+            </button>
+          </td>
+
+        </tr>
+        {% endfor %}
+        {% endif %}
       </tbody>
     </table>
   </div>
 </div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body text-center py-4">
+        <p class="fs-5 mb-2">
+          Are you sure you want to delete
+        </p>
+        <p class="fw-bold text-danger fs-5" id="deleteItemName"></p>
+        <p class="text-muted mb-0">
+          This action cannot be undone.
+        </p>
+      </div>
+
+      <div class="modal-footer justify-content-center gap-2">
+        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <form method="post" id="deleteForm">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger px-4">
+            Yes, Delete
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const deleteModal = document.getElementById('deleteConfirmModal');
+
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+
+    const deleteUrl = button.getAttribute('data-delete-url');
+    const itemName = button.getAttribute('data-item-name');
+
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteForm').action = deleteUrl;
+  });
+</script>
+
+
 {% endblock %}

@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import Dashboard, SignUpView, Index, TemplateView
+from .views import (
+    Dashboard,
+    SignUpView,
+    Index,
+    TemplateView,
+    ItemCreate,
+    ItemUpdate,
+    ItemDelete,
+)
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -21,4 +29,7 @@ urlpatterns = [
         name="logged_out",
     ),
     path("dashboard/", Dashboard.as_view(), name="dashboard"),
+    path("create/", ItemCreate.as_view(), name="item_create"),
+    path("update/<str:sku>", ItemUpdate.as_view(), name="update_item"),
+    path("delete/<str:sku>", ItemDelete.as_view(), name="delete_item"),
 ]

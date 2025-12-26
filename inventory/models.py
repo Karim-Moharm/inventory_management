@@ -22,8 +22,8 @@ class Category(TimeStampedModel):
 
     class Meta:
         ordering = ["name"]
-        # verbose_name = ("Category")
-        # verbose_name_plural = ("Categories")
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
         indexes = [models.Index(fields=["name", "is_active"])]
 
     def delete(self, *args, **kwargs):
@@ -68,8 +68,8 @@ class InventoryItem(TimeStampedModel):
 
     class Meta:
         ordering = ["-created_at"]
-        # verbose_name = ("Inventory Item")
-        # verbose_name_plural = ("Inventory Items")
+        verbose_name = "Inventory Item"
+        verbose_name_plural = "Inventory Items"
         indexes = [
             models.Index(fields=["sku"]),
             models.Index(fields=["is_active"]),
