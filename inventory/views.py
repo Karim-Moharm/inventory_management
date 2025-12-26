@@ -5,8 +5,13 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 
 
-class TemplateView(TemplateView):
-    template_name = "inventory/dashboard.html"
+class Index(TemplateView):
+    template_name = "inventory/index.html"
+
+
+class Dashboard(View):
+    def get(self, request):
+        return render(request, "inventory/dashboard.html")
 
 
 class SignUpView(View):
